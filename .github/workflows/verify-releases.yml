@@ -1,0 +1,74 @@
+name: Verify release packages
+
+on:
+  push:
+    paths:
+      - "releases/**"
+      - ".github/workflows/verify-releases.yml"
+  pull_request:
+    paths:
+      - "releases/**"
+      - ".github/workflows/verify-releases.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - browser: chrome
+            archive: releases/murmur-chrome-v0.7.0.zip
+          - browser: opera-gx
+            archive: releases/murmur-opera-gx-v0.7.0.zip
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Verify published checksums
+        working-directory: releases
+        run: sha256sum --check SHA256SUMS.txt
+
+      - name: Extract package
+        run: |
+          mkdir -p "package-${{ matrix.browser }}"
+          unzip -q "${{ matrix.archive }}" -d "package-${{ matrix.browser }}"
+
+      - name: Verify required files
+        run: |
+          root="package-${{ matrix.browser }}"
+          for file in \
+            manifest.json background.js popup.html sidepanel.html \
+            content/youtube-detector.js content/youtube-drawer.js content/youtube-drawer.css \
+            ui/app.js ui/lyrics-core.js ui/lyrics.js ui/shared.css ui/lyrics.css \
+            assets/murmur-mark.svg assets/icon-16.png assets/icon-32.png \
+            assets/icon-48.png assets/icon-128.png LICENSE PRIVACY.md; do
+            test -f "$root/$file" || { echo "Missing $file"; exit 1; }
+          done
+
+      - name: Verify manifest
+        env:
+          PACKAGE_BROWSER: ${{ matrix.browser }}
+        run: |
+          node <<'NODE'
+          const fs = require("node:fs");
+          const browser = process.env.PACKAGE_BROWSER;
+          const manifest = JSON.parse(fs.readFileSync(`package-${browser}/manifest.json`, "utf8"));
+          const fail = (message) => { throw new Error(message); };
+          manifest.manifest_version === 3 || fail("Manifest V3 is required");
+          manifest.name === "Murmur" || fail("Unexpected extension name");
+          manifest.version === "0.7.0" || fail("Unexpected release version");
+          const resources = manifest.web_accessible_resources?.flatMap((entry) => entry.resources || []) || [];
+          resources.length === 1 && resources[0] === "sidepanel.html" || fail("Unexpected web-accessible resources");
+          if (browser === "chrome") {
+            manifest.permissions?.includes("sidePanel") || fail("Chrome sidePanel permission is missing");
+            manifest.side_panel?.default_path === "sidepanel.html" || fail("Chrome side panel is missing");
+          } else {
+            !manifest.permissions?.includes("sidePanel") || fail("Opera package contains Chrome sidePanel permission");
+            !manifest.side_panel || fail("Opera package contains a Chrome side_panel entry");
+          }
+          NODE

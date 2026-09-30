@@ -1,0 +1,59 @@
+name: Feature request
+description: Propose an improvement to Murmur
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe what Murmur should do from the user's perspective.
+    validations:
+      required: true
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser scope
+      options:
+        - Both Chrome and Opera GX
+        - Chrome only
+        - Opera GX only
+        - Not browser-specific
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Product area
+      options:
+        - Detection
+        - Matching
+        - Lyrics reader
+        - Popup
+        - Accessibility
+        - Privacy
+        - Packaging and updates
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      options:
+        - label: This request does not ask Murmur to redistribute a lyrics catalog or bypass third-party restrictions.
+          required: true
+

@@ -1,0 +1,107 @@
+name: Bug report
+description: Report a reproducible Murmur problem
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search existing issues first. Do not include passwords, cookies, private profile data, or full copyrighted lyrics.
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Google Chrome
+        - Opera GX
+        - Other Chromium browser
+    validations:
+      required: true
+  - type: input
+    id: browser-version
+    attributes:
+      label: Browser version
+      placeholder: Example: Chrome 140.0.0.0
+    validations:
+      required: true
+  - type: input
+    id: murmur-version
+    attributes:
+      label: Murmur version
+      placeholder: Example: 0.7.0
+    validations:
+      required: true
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating system
+      placeholder: Example: Windows 11
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected area
+      options:
+        - Installation
+        - Popup
+        - Track detection
+        - New-song detection
+        - Lyrics matching
+        - Lyrics extraction
+        - Chrome side panel
+        - Opera GX drawer
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: List the shortest reliable sequence that shows the problem.
+      placeholder: |
+        1. Open ...
+        2. Play ...
+        3. Select ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: input
+    id: youtube-url
+    attributes:
+      label: YouTube URL
+      description: Include only if it is safe to share publicly.
+  - type: textarea
+    id: match
+    attributes:
+      label: Detected track and selected match
+      description: State the Now Playing title/artist and the Genius match label. Do not paste the lyrics.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Add a privacy-cropped screenshot or relevant notes.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I refreshed the YouTube tab after installing or updating Murmur.
+          required: true
+        - label: I verified that I installed the package for my browser.
+          required: true
+        - label: I removed private information and full lyrics from this report.
+          required: true
+
